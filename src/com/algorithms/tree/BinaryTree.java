@@ -1,17 +1,15 @@
-package algorithms.tree;
+package com.algorithms.tree;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 二叉树常用的算法总结
- * @author DUAN
- * @date 2018/11/13
+ * Demo class
+ *
+ * @author DZH
  */
 public class BinaryTree {
-
-
     /**
      * 根据层次遍历的顺序来创建一颗二叉树
      * 值为null表示结点为空
@@ -39,10 +37,12 @@ public class BinaryTree {
             if(!valueQueue.isEmpty()){
                 value1=valueQueue.removeFirst();
                 currentNode.left=new TreeNode(value1);
+                treeQueue.addLast(currentNode.left);
             }
             if(!valueQueue.isEmpty()){
                 value2=valueQueue.removeFirst();
                 currentNode.right=new TreeNode(value2);
+                treeQueue.addLast(currentNode.right);
             }
             //值队列空则构建结束
             if(valueQueue.isEmpty()){
@@ -58,13 +58,13 @@ public class BinaryTree {
      * @author DUAN
      * @date 2018/11/13 18:18
      */
-    private void preorderTraversal(TreeNode root){
+    private void preOrderTraversal(TreeNode root){
         if(root==null){
             return;
         }
         System.out.print(root.value+" ");
-        preorderTraversal(root.left);
-        preorderTraversal(root.right);
+        preOrderTraversal(root.left);
+        preOrderTraversal(root.right);
     }
 
     /**
@@ -86,6 +86,6 @@ public class BinaryTree {
         }
         BinaryTree binaryTree=new BinaryTree();
         TreeNode root=binaryTree.createTree(values);
-        binaryTree.preorderTraversal(root);
+        binaryTree.preOrderTraversal(root);
     }
 }
