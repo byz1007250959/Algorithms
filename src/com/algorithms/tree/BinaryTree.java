@@ -1,33 +1,29 @@
 package com.algorithms.tree;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
- * Demo class
- *
- * @author DZH
+ * 二叉树常用的算法总结
+ * @author DUAN
+ * @date 2018/11/13
  */
 public class BinaryTree {
+
+
     /**
      * 根据层次遍历的顺序来创建一颗二叉树
      * 值为null表示结点为空
-     * @param values 结点值的列表
+     * @param valueQueue 结点值的队列
      * @author DUAN
      * @date 2018/11/13 17:40
      */
-    public TreeNode createTree(List<Integer> values){
+    public TreeNode createTree(LinkedList<Integer> valueQueue){
         //初始化根节点
-        Integer rootValue=values.get(0);
+        Integer rootValue=valueQueue.removeFirst();
         TreeNode root=new TreeNode(rootValue);
-        //值入队列，根节点入队列
-        LinkedList<Integer> valueQueue=new LinkedList<>();
+        //根节点入队列
         LinkedList<TreeNode> treeQueue=new LinkedList<>();
         treeQueue.add(root);
-        for(int i=1;i<values.size();i++){
-            valueQueue.add(values.get(i));
-        }
         while (!treeQueue.isEmpty()){
             //弹出队列第一个结点
             TreeNode currentNode=treeQueue.removeFirst();
@@ -53,6 +49,20 @@ public class BinaryTree {
     }
 
     /**
+     * 求树的深度
+     * @param root 树的根节点
+     * @return 树的深度
+     * @author DUAN
+     * @date 2018/11/14 17:03
+     */
+    private int getDeep(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        return Math.max(getDeep(root.left),getDeep(root.right))+1;
+    }
+
+    /**
      * 递归方式的前序遍历
      * @param root 根节点
      * @author DUAN
@@ -68,6 +78,59 @@ public class BinaryTree {
     }
 
     /**
+     * 递归方式的中序遍历
+     * @param root 根节点
+     * @author DUAN
+     * @date 2018/11/14 17:10
+     */
+    private void inOrderTraversal(TreeNode root){
+        if(root==null){
+            return;
+        }
+        inOrderTraversal(root.left);
+        System.out.print(root.value+" ");
+        inOrderTraversal(root.right);
+    }
+
+    /**
+     * 递归方式的后序遍历
+     * @param root 根节点
+     * @author DUAN
+     * @date 2018/11/14 17:13
+     */
+    private void postOrderTraversal(TreeNode root){
+        if(root==null){
+            return;
+        }
+        postOrderTraversal(root.left);
+        postOrderTraversal(root.right);
+        System.out.print(root.value+" ");
+    }
+
+    /**二叉树的层次遍历
+     * 层次遍历相当于广度优先搜索，具体算法思想是：首先根节点如队列，当队列不为空时候
+     * 每次弹出第一个结点进行访问，如果左子或者右子节点不为空则加入到队列中
+     * @param root 根节点
+     * @author DUAN
+     * @date 2018/11/14 17:18
+     */
+    private void levelOrderTraversal(TreeNode root){
+        LinkedList<TreeNode> queue=new LinkedList<>();
+        queue.addFirst(root);
+        while (!queue.isEmpty()){
+            TreeNode currentNode=queue.removeFirst();
+            System.out.print(currentNode.value+" ");
+            if(currentNode.left!=null){
+                queue.addLast(currentNode.left);
+            }
+            if(currentNode.right!=null){
+                queue.addLast(currentNode.right);
+            }
+        }
+    }
+
+
+    /**
      * 树节点定义
      */
     private static class TreeNode{
@@ -80,12 +143,19 @@ public class BinaryTree {
     }
 
     public static void main(String[] args){
-        List<Integer> values=new ArrayList<>();
+        LinkedList<Integer> values=new LinkedList<>();
         for(int i=0;i<10;i++){
             values.add(i);
         }
         BinaryTree binaryTree=new BinaryTree();
         TreeNode root=binaryTree.createTree(values);
+        long a=System.currentTimeMillis();
         binaryTree.preOrderTraversal(root);
+        System.out.println();
+        binaryTree.inOrderTraversal(root);
+        System.out.println();
+        binaryTree.postOrderTraversal(root);
+        System.out.println();
+        binaryTree.levelOrderTraversal(root);
     }
 }
