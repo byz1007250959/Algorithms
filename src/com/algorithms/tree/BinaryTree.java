@@ -1,6 +1,7 @@
 package com.algorithms.tree;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * 二叉树常用的算法总结
@@ -49,17 +50,77 @@ public class BinaryTree {
     }
 
     /**
-     * 求树的深度
+     * 递归求树的深度
      * @param root 树的根节点
      * @return 树的深度
      * @author DUAN
      * @date 2018/11/14 17:03
      */
-    private int getDeep(TreeNode root){
+    private int getDepth(TreeNode root){
         if(root==null){
             return 0;
         }
-        return Math.max(getDeep(root.left),getDeep(root.right))+1;
+        return Math.max(getDepth(root.left),getDepth(root.right))+1;
+    }
+
+    /**
+     * 非递归方式求树的深度
+     * @param root 根节点
+     * @return 树的深度
+     * @author DUAN
+     * @date 2018/11/15 11:06
+     */
+    private int getDepth2(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        //不为空定义当前深度，当前结点个数，下层节点个数
+        int depth=0;
+        int currentLevelNodes=1;
+        int nextLevelNodes=0;
+        LinkedList<TreeNode> queue=new LinkedList<>();
+        queue.addLast(root);
+        while (!queue.isEmpty()){
+            //移除结点并将当前层结点减1
+            TreeNode currentNode=queue.removeFirst();
+            currentLevelNodes--;
+            if(currentNode.left!=null){
+                //左子节点不为空，下一层节点个数加1
+                queue.addLast(currentNode.left);
+                nextLevelNodes++;
+            }
+            if(currentNode.right!=null){
+                //右子节点不为空，下一层节点个数加1
+                queue.addLast(currentNode.right);
+                nextLevelNodes++;
+            }
+            if(currentLevelNodes==0){
+                /*
+                如果当前层节点个数为0，表示已经全部访问过，深度+1，置当前层节点
+                个数为下一层节点个数，下一层结点个数清零
+                 */
+                depth++;
+                currentLevelNodes=nextLevelNodes;
+                nextLevelNodes=0;
+            }
+        }
+        return depth;
+    }
+
+    /**
+     * 递归求二叉树的结点个数
+     * 非递归求节点个数的思想和层次遍历的思想一样，只需用队列保存节点
+     * 每次弹出节点进行左右子是否空判断计数即可
+     * @param root 根节点
+     * @return 结点个数
+     * @author DUAN
+     * @date 2018/11/15 10:48
+     */
+    private int count(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        return count(root.left)+count(root.right)+1;
     }
 
     /**
@@ -72,9 +133,36 @@ public class BinaryTree {
         if(root==null){
             return;
         }
-        System.out.print(root.value+" ");
+        visit(root);
         preOrderTraversal(root.left);
         preOrderTraversal(root.right);
+    }
+
+    /**
+     * 前序遍历的非递归方式实现
+     * @param root 根节点
+     * @author DUAN
+     * @date 2018/11/14 19:10
+     */
+    private void preOrderTraversal2(TreeNode root){
+        if(root==null){
+            return;
+        }
+        Stack<TreeNode> stack=new Stack<>();
+        TreeNode currentNode=root;
+        while (currentNode!=null||!stack.isEmpty()){
+            //先访问左子节点，并且将左节点入栈，一直走到左树最深处
+            while (currentNode!=null){
+                visit(currentNode);
+                stack.push(currentNode);
+                currentNode=currentNode.left;
+            }
+            if(!stack.isEmpty()){
+                //弹出左子节点,令当前节点为该节点的右子节点
+                currentNode=stack.pop();
+                currentNode=currentNode.right;
+            }
+        }
     }
 
     /**
@@ -88,8 +176,35 @@ public class BinaryTree {
             return;
         }
         inOrderTraversal(root.left);
-        System.out.print(root.value+" ");
+        visit(root);
         inOrderTraversal(root.right);
+    }
+
+    /**
+     * 非递归方式的二叉树中序遍历
+     * @param root 根节点
+     * @author DUAN
+     * @date 2018/11/15 10:36
+     */
+    private void inOrderTraversal2(TreeNode root){
+        if(root==null){
+            return;
+        }
+        Stack<TreeNode> stack=new Stack<>();
+        TreeNode currentNode=root;
+        while (currentNode!=null||!stack.isEmpty()){
+            while (currentNode!=null){
+                //左子不为空时，一直将左子压入栈中
+                stack.push(currentNode);
+                currentNode=currentNode.left;
+            }
+            if(!stack.empty()){
+                //左子节点从栈中弹出时，对该节点访问，并将当前结点置为改节点的右子节点
+                currentNode=stack.pop();
+                visit(currentNode);
+                currentNode=currentNode.right;
+            }
+        }
     }
 
     /**
@@ -104,7 +219,41 @@ public class BinaryTree {
         }
         postOrderTraversal(root.left);
         postOrderTraversal(root.right);
-        System.out.print(root.value+" ");
+        visit(root);
+    }
+
+    /**
+     * 非递归方式的后续遍历
+     * @param root 根节点
+     * @author DUAN
+     * @date 2018/11/15 13:57
+     */
+    private void postOrderTraversal2(TreeNode root){
+        if(root==null){
+            return;
+        }
+        //保存树节点
+        Stack<TreeNode> stack1=new Stack<>();
+        //保存后序遍历结果
+        Stack<TreeNode> stack2=new Stack<>();
+        stack1.add(root);
+        while (!stack1.isEmpty()){
+            TreeNode currentNode=stack1.pop();
+            stack2.push(currentNode);
+            /*
+            左节点先入栈右节点后入栈，这样在弹出之后再
+            压入栈2。这样右结点会在栈2的底部从而达到后访问的目的
+             */
+            if(currentNode.left!=null){
+                stack1.push(currentNode.left);
+            }
+            if(currentNode.right!=null){
+                stack1.push(currentNode.right);
+            }
+        }
+        while (!stack2.isEmpty()){
+            visit(stack2.pop());
+        }
     }
 
     /**二叉树的层次遍历
@@ -119,7 +268,7 @@ public class BinaryTree {
         queue.addFirst(root);
         while (!queue.isEmpty()){
             TreeNode currentNode=queue.removeFirst();
-            System.out.print(currentNode.value+" ");
+            visit(currentNode);
             if(currentNode.left!=null){
                 queue.addLast(currentNode.left);
             }
@@ -129,6 +278,16 @@ public class BinaryTree {
         }
     }
 
+    /**
+     * 访问一个结点
+     * @param node 结点
+     */
+    private void visit(TreeNode node){
+        if(node==null){
+            return;
+        }
+        System.out.print(node.value+" ");
+    }
 
     /**
      * 树节点定义
@@ -149,13 +308,22 @@ public class BinaryTree {
         }
         BinaryTree binaryTree=new BinaryTree();
         TreeNode root=binaryTree.createTree(values);
-        long a=System.currentTimeMillis();
         binaryTree.preOrderTraversal(root);
-        System.out.println();
+        System.out.println("递归方式前序遍历");
+        binaryTree.preOrderTraversal2(root);
+        System.out.println("非递归方式前序遍历");
         binaryTree.inOrderTraversal(root);
-        System.out.println();
+        System.out.println("递归方式中序遍历");
+        binaryTree.inOrderTraversal2(root);
+        System.out.println("非递归方式中序遍历");
         binaryTree.postOrderTraversal(root);
-        System.out.println();
+        System.out.println("递归方式的后序遍历");
+        binaryTree.postOrderTraversal2(root);
+        System.out.println("非递归方式的后续遍历");
         binaryTree.levelOrderTraversal(root);
+        System.out.println("二叉树的层次遍历(广度优先搜索)");
+        System.out.println("递归方式求树的深度:"+binaryTree.getDepth(root));
+        System.out.println("非递归方式求树的深度:"+binaryTree.getDepth2(root));
+        System.out.println("递归方式求树的结点个数:"+binaryTree.count(root));
     }
 }
