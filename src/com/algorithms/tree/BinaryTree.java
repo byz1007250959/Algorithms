@@ -278,6 +278,67 @@ public class BinaryTree {
         }
     }
 
+    /**求第k层节点的个数
+     * @param root 根节点
+     * @param  k 第k层
+     * @return 第k层节点的数目
+     * @author DUAN
+     * @date 2018/12/5 14:17
+     */
+    private int getKLevelNodeNumber(TreeNode root, int k){
+        if(root==null||k<1){
+            return 0;
+        }
+        if(k==1){
+            return 1;
+        }
+        return getKLevelNodeNumber(root.left,k-1)+getKLevelNodeNumber(root.right,k-1);
+    }
+
+    /**
+     * 递归求二叉树中叶子结点的个数
+     * @param root 根节点
+     * @return 这棵树叶子结点个数
+     * @author DUAN
+     * @date 2018/12/5 14:28
+     */
+    private int getLeafNodeNumber(TreeNode root){
+        if(root==null){
+            return 0;
+        }
+        if(root.left == null && root.right==null){
+            return 1;
+        }
+        return getLeafNodeNumber(root.left)+getLeafNodeNumber(root.right);
+    }
+
+    /**
+     * 非递归求解二叉树中叶子结点个数
+     * @param root 根节点
+     * @return 叶子结点个数
+     * @author DUAN
+     * @date 2018/12/5 14:34
+     */
+    private int getLeafNodeNumber2(TreeNode root){
+        LinkedList<TreeNode> queue=new LinkedList<>();
+        queue.add(root);
+        TreeNode currentNode;
+        int leafCount=0;
+        while (!queue.isEmpty()){
+            currentNode=queue.removeFirst();
+            if(currentNode.left == null && currentNode.right==null){
+                leafCount++;
+            }
+            if(currentNode.left != null){
+                queue.addLast(currentNode.left);
+            }
+            if(currentNode.right !=null){
+                queue.addLast(currentNode.right);
+            }
+        }
+        return leafCount;
+    }
+
     /**
      * 访问一个结点
      * @param node 结点
@@ -308,22 +369,25 @@ public class BinaryTree {
         }
         BinaryTree binaryTree=new BinaryTree();
         TreeNode root=binaryTree.createTree(values);
-        binaryTree.preOrderTraversal(root);
-        System.out.println("递归方式前序遍历");
-        binaryTree.preOrderTraversal2(root);
-        System.out.println("非递归方式前序遍历");
-        binaryTree.inOrderTraversal(root);
-        System.out.println("递归方式中序遍历");
-        binaryTree.inOrderTraversal2(root);
-        System.out.println("非递归方式中序遍历");
-        binaryTree.postOrderTraversal(root);
-        System.out.println("递归方式的后序遍历");
-        binaryTree.postOrderTraversal2(root);
-        System.out.println("非递归方式的后续遍历");
-        binaryTree.levelOrderTraversal(root);
-        System.out.println("二叉树的层次遍历(广度优先搜索)");
-        System.out.println("递归方式求树的深度:"+binaryTree.getDepth(root));
-        System.out.println("非递归方式求树的深度:"+binaryTree.getDepth2(root));
-        System.out.println("递归方式求树的结点个数:"+binaryTree.count(root));
+//        binaryTree.preOrderTraversal(root);
+//        System.out.println("递归方式前序遍历");
+//        binaryTree.preOrderTraversal2(root);
+//        System.out.println("非递归方式前序遍历");
+//        binaryTree.inOrderTraversal(root);
+//        System.out.println("递归方式中序遍历");
+//        binaryTree.inOrderTraversal2(root);
+//        System.out.println("非递归方式中序遍历");
+//        binaryTree.postOrderTraversal(root);
+//        System.out.println("递归方式的后序遍历");
+//        binaryTree.postOrderTraversal2(root);
+//        System.out.println("非递归方式的后续遍历");
+//        binaryTree.levelOrderTraversal(root);
+//        System.out.println("二叉树的层次遍历(广度优先搜索)");
+//        System.out.println("递归方式求树的深度:"+binaryTree.getDepth(root));
+//        System.out.println("非递归方式求树的深度:"+binaryTree.getDepth2(root));
+//        System.out.println("递归方式求树的结点个数:"+binaryTree.count(root));
+//        System.out.println("求第三层节点个数:"+binaryTree.getKLevelNodeNumber(root,3));
+        System.out.println("递归求叶子结点个数:"+binaryTree.getLeafNodeNumber(root));
+        System.out.println("非递归求叶子结点个数:"+binaryTree.getLeafNodeNumber2(root));
     }
 }
