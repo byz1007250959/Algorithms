@@ -340,6 +340,186 @@ public class BinaryTree {
     }
 
     /**
+     * 判断两棵二叉树是否相同
+     * 思路：如果根节点都是null则返回true
+     * 如果其中一颗树为null另一个非null返回false
+     * 如果以上满足并且节点的值相同则返回true否则返回false
+     * @param root1 树1的根节点
+     * @param root2 树2的根节点
+     * @return 布尔值
+     * @author DUAN
+     * @date 2019/3/18 10:46
+     */
+    private boolean isSameTree(TreeNode root1,TreeNode root2){
+        if (root1 == null && root2 == null){
+            return true;
+        }
+        else if (root1 == null || root2 == null){
+            return false;
+        }
+        if (root1.value != root2.value){
+            return false;
+        }
+        return isSameTree(root1.left,root2.left) && isSameTree(root1.right,root2.right);
+    }
+
+    /**
+     * 非递归方式判断两棵树是否相同
+     * 思路：首先判断两个根节点是否为空，都为空返回true
+     * 如果一颗为空一颗不为空返回false
+     * 经过以上判断将两个根节点分别加入两个栈中，
+     * 对栈中节点弹出进行后序判断，见代码
+     * @param root1 第一棵树根节点
+     * @param root2 第二颗树根节点
+     * @return 布尔值
+     * @author DUAN
+     * @date 2019/3/18 11:11
+     */
+    private boolean isSameTree2(TreeNode root1, TreeNode root2){
+        if (root1 == null && root2 ==null){
+            return true;
+        }
+        else if (root1 == null || root2 == null){
+            return false;
+        }
+        //运行到此说明两个根节点都不为空，分别入栈
+        Stack<TreeNode> stack1 = new Stack<>();
+        Stack<TreeNode> stack2 = new Stack<>();
+        stack1.push(root1);
+        stack2.push(root2);
+        while (!stack1.empty() && !stack2.empty()){
+            TreeNode node1 = stack1.pop();
+            TreeNode node2 = stack2.pop();
+            if (node1 == null && node2 == null){
+                continue;
+            }
+            else if (node1 != null && node2 != null && node1.value == node2.value){
+                stack1.push(node1.left);
+                stack1.push(node1.right);
+                stack2.push(node2.left);
+                stack2.push(node2.right);
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断是否是AVL树
+     * 平衡二叉树要保证树的左树最深和右树最深相差不超过1
+     * 利用前面的算二叉树深度函数递归判断二叉树是否是avl树
+     * @param root 树根节点
+     * @return 布尔值
+     * @author DUAN
+     * @date 2019/3/18 14:37
+     */
+    private boolean isAVLTree(TreeNode root){
+        if (root==null){
+            return true;
+        }
+        if (Math.abs(getDepth(root.left)-getDepth(root.right))>1){
+            return false;
+        }
+        return isAVLTree(root.left) && isAVLTree(root.right);
+    }
+
+    /**
+     * 寻找两个树节点的最近公共祖先节点,不存在则返回null
+     * 思路：如果一个结点在根节点左树另一个结点在根节点右树
+     * 则最近公共祖先为根节点。如果两个节点都在根节点的左树或者右树
+     * 则以左节点或右节点为根递归进行查找。
+     * @param root 根节点
+     * @param node1 第一个树节点
+     * @param node2 第二个树节点
+     * @return 最近公共祖先节点，如果没有则返回null
+     * @author DUAN
+     * @date 2019/3/19 10:58
+     */
+    private TreeNode findLastCommonParentNode(TreeNode root, TreeNode node1, TreeNode node2){
+        if (root == null){
+            return null;
+        }
+        //判断两个节点是否与根节点相同
+        if (root.value == node1.value){
+            /*
+            如果根节点等于节点1，查找节点2是否存在
+            如果存在返回根节点，不存在返回null
+             */
+            if (findNodeExist(root,node2)){
+                return root;
+            }
+            else {
+                return null;
+            }
+        }
+        else if (root.value == node2.value){
+            /*
+            如果根节点等于节点2，查找节点1是否存在
+            如果存在返回根节点，不存在返回null
+             */
+            if (findNodeExist(root,node1)){
+                return root;
+            }
+            else {
+                return null;
+            }
+        }
+        //两个节点不是根节点，进一步在左树和右树查找
+        if (findNodeExist(root.left,node1)){
+            //节点1存在于根节点左树
+            if (findNodeExist(root.right,node2)){
+                //节点2存在于根节点右树，返回根节点
+                return root;
+            }
+            else if (findNodeExist(root.left,node2)){
+                //如果两个节点都在左树，以左孩子为根递归寻找
+                return findLastCommonParentNode(root.left,node1,node2);
+            }
+            else {
+                //node2不存在,返回null
+                return null;
+            }
+        }
+        else if (findNodeExist(root.right,node1)){
+            //节点1存在于根节点右树
+            if (findNodeExist(root.left,node2)){
+                //节点2存在于根节点左树
+                return root;
+            }
+            else if (findNodeExist(root.right,node2)){
+                return findLastCommonParentNode(root.right,node1,node2);
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            //node1不存在，没有公共节点返回null
+            return null;
+        }
+    }
+
+    /**
+     * 判断当前结点是否在当前根节点下
+     * @param root 当前根节点
+     * @param node 待查找的结点
+     * @return 布尔值
+     * @author DUAN
+     * @date 2019/3/19 11:01
+     */
+    private boolean findNodeExist(TreeNode root, TreeNode node){
+        if (root == null){
+            return false;
+        }
+        if (root.value == node.value){
+            return true;
+        }
+        return findNodeExist(root.left,node) || findNodeExist(root.right,node);
+    }
+
+    /**
      * 访问一个结点
      * @param node 结点
      */
@@ -387,7 +567,22 @@ public class BinaryTree {
 //        System.out.println("非递归方式求树的深度:"+binaryTree.getDepth2(root));
 //        System.out.println("递归方式求树的结点个数:"+binaryTree.count(root));
 //        System.out.println("求第三层节点个数:"+binaryTree.getKLevelNodeNumber(root,3));
-        System.out.println("递归求叶子结点个数:"+binaryTree.getLeafNodeNumber(root));
-        System.out.println("非递归求叶子结点个数:"+binaryTree.getLeafNodeNumber2(root));
+//        System.out.println("递归求叶子结点个数:"+binaryTree.getLeafNodeNumber(root));
+//        System.out.println("非递归求叶子结点个数:"+binaryTree.getLeafNodeNumber2(root));
+//        LinkedList<Integer> values2=new LinkedList<>();
+//        for(int i=0;i<10;i++){
+//            values2.add(i);
+//        }
+//        TreeNode root2 = binaryTree.createTree(values2);
+//        System.out.println(binaryTree.isSameTree(root,root2));
+//        System.out.println(binaryTree.isSameTree2(root,root2));
+//        System.out.println(binaryTree.isAVLTree(root));
+        TreeNode node1 =new TreeNode(7);
+        TreeNode node2 =new TreeNode(9);
+        TreeNode commonRoot=binaryTree.findLastCommonParentNode(root,node1,node2);
+        if(commonRoot!=null){
+            System.out.println(commonRoot.value);
+        }
+
     }
 }
