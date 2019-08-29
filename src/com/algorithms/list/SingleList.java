@@ -57,7 +57,7 @@ public class SingleList {
         }
     }
 
-    private class Node {
+    private static class Node {
         int val;
         Node next;
         Node(int val,Node next){
