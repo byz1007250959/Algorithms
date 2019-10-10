@@ -67,7 +67,7 @@ public class LegalIpAddress {
         return true;
     }
     public static void main(String[] args){
-        LegalIpAddress test = new LegalIpAddress(0000L);
+        LegalIpAddress test = new LegalIpAddress(12700L);
         test.findIpAddress();
         test.pringAllIp();
     }
