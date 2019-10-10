@@ -22,6 +22,9 @@ public class SingleList {
         }
     }
 
+    /**
+     * 单链表反转
+     */
     public void reverser(){
         if (head == null){
             return;
