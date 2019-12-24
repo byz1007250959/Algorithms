@@ -60,6 +60,32 @@ public class SingleList {
         }
     }
 
+    /**
+     * 递归方式反转单链表
+     * @author DUAN
+     * @date 2019/12/24 10:22
+     */
+    public Node reverseList(Node head) {
+        Node last = reverse(head);
+        if (last != null)
+            last.next = null;
+        this.last = last;
+        return this.head;
+    }
+
+    private Node reverse(Node head) {
+        if (head == null){
+            return null;
+        }
+        Node node = reverse(head.next);
+        if (node == null) {
+            this.head = head;
+            return head;
+        }
+        node.next = head;
+        return head;
+    }
+
     private static class Node {
         int val;
         Node next;
@@ -71,12 +97,14 @@ public class SingleList {
 
     public static void main(String[] args){
         SingleList singleList = new SingleList();
-        for(int i = 0; i < 10; i++){
+        for(int i = 1; i <= 5; i++){
             singleList.add(i);
         }
         singleList.print();
-        singleList.reverser();
-        System.out.println();
+        singleList.reverseList(singleList.head);
         singleList.print();
+//        singleList.reverser();
+//        System.out.println();
+//        singleList.print();
     }
 }
