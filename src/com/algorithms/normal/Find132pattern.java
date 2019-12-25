@@ -47,6 +47,12 @@ public class Find132pattern {
         return ret;
     }
 
+    /**
+     * 官方题解：构造j的前缀最小值数组(aj位置之前的最小值，作为ai的候选值)
+     * 使用栈来保存ak的候选值，从后向前遍历。
+     * @author DUAN
+     * @date 2019/12/24 10:39
+     */
     public boolean find132pattern2(int[] nums) {
         if (nums == null || nums.length < 3){
             return false;
